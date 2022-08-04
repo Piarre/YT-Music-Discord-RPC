@@ -1,13 +1,21 @@
 const client = require("discord-rich-presence")("983806983184470086");
 const express = require("express");
+const axios = require("axios");
 const app = express();
 
 var song = "Waiting for";
 var artist = "for music...";
 var tempTime = "0:00";
 (() => {
+  client.on("error", () => {
+    process.exit(0);
+  });
+  startRpc();
+})();
+
+function startRpc() {
   console.log("Starting express server...");
-  update(song, artist); 
+  update(song, artist);
   app.use(express.json());
   app.post("/", (request, response) => {
     let content = request.body;
@@ -66,4 +74,10 @@ var tempTime = "0:00";
     }
     return temp;
   }
-})();
+  async function checkEndoint() {
+    let res;
+    await axios.get(`http://127.0.0.1:6463`).catch(function (error) {
+      error.response ? (res = true) : (res = false);
+    });
+  }
+}
